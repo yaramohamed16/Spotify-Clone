@@ -1,4 +1,3 @@
-//App
 import React, { useEffect } from "react";
 import Login from "./components/Login";
 import Spotify from "./components/Spotify";

@@ -1,4 +1,3 @@
-//spotify.jsx
 import React, { useEffect, useRef, useState } from "react";
 import Sidebar from "./Sidebar";
 import styled from "styled-components";

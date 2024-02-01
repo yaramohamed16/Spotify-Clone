@@ -7,13 +7,6 @@ import { reducerCases } from "../utils/Constants";
 export default function Body({ headerBackground }) {
   const [{ token, selectedPlaylist, selectedPlaylistId }, dispatch] =
     useStateProvider();
-  const extractDescription = (description) => {
-    // Use a regular expression to extract text between <a> and </a> tags
-    const regex = /<a[^>]*>(.*?)<\/a>/g;
-    const extractedText = description.replace(regex, (match, group1) => group1);
-
-    return extractedText;
-  };
 
   useEffect(() => {
     const getInitialPlaylist = async () => {
@@ -29,7 +22,9 @@ export default function Body({ headerBackground }) {
       const selectedPlaylist = {
         id: response.data.id,
         name: response.data.name,
-        description: extractDescription(response.data.description),
+        description: response.data.description.startsWith("<a")
+          ? ""
+          : response.data.description,
         image: response.data.images[0].url,
         tracks: response.data.tracks.items.map(({ track }) => ({
           id: track.id,
