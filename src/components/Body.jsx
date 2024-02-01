@@ -14,8 +14,9 @@ export default function Body({ headerBackground }) {
   useEffect(() => {
     const getInitialPlaylist = async () => {
       try {
-        const response = await axios.get(
-          `https://api.spotify.com/v1/playlists/${selectedPlaylistId}`,
+        // Fetch the user's playlists
+        const playlistsResponse = await axios.get(
+          `https://api.spotify.com/v1/me/playlists`,
           {
             headers: {
               Authorization: "Bearer " + token,
@@ -23,39 +24,49 @@ export default function Body({ headerBackground }) {
             },
           }
         );
-        const selectedPlaylist = {
-          id: response.data.id,
-          name: response.data.name,
-          description: extractDescription(response.data.description),
-          image: response.data.images[0].url,
-          tracks: response.data.tracks.items.map(({ track }) => ({
-            id: track.id,
-            name: track.name,
-            artists: track.artists.map((artist) => artist.name),
-            image: track.album.images[2].url,
-            duration: track.duration_ms,
-            album: track.album.name,
-            context_uri: track.album.uri,
-            track_number: track.track_number,
-          })),
-        };
-        dispatch({ type: reducerCases.SET_PLAYLIST, selectedPlaylist });
-      } catch (error) {
-        console.error("Error fetching playlist:", error);
-
-        // If there's an error fetching the selected playlist, use the default playlists
-        const defaultPlaylist = defaultPlaylists.find(
+    
+        // Find the playlist in the user's playlists
+        const userPlaylist = playlistsResponse.data.items.find(
           (playlist) => playlist.id === selectedPlaylistId
         );
-
-        if (defaultPlaylist) {
-          dispatch({
-            type: reducerCases.SET_PLAYLIST,
-            selectedPlaylist: defaultPlaylist,
-          });
+    
+        if (userPlaylist) {
+          const selectedPlaylist = {
+            id: userPlaylist.id,
+            name: userPlaylist.name,
+            description: extractDescription(userPlaylist.description),
+            image: userPlaylist.images[0].url,
+            tracks: userPlaylist.tracks.items.map(({ track }) => ({
+              id: track.id,
+              name: track.name,
+              artists: track.artists.map((artist) => artist.name),
+              image: track.album.images[2].url,
+              duration: track.duration_ms,
+              album: track.album.name,
+              context_uri: track.album.uri,
+              track_number: track.track_number,
+            })),
+          };
+    
+          dispatch({ type: reducerCases.SET_PLAYLIST, selectedPlaylist });
+        } else {
+          // If the user's playlist is not found, use the default playlists
+          const defaultPlaylist = defaultPlaylists.find(
+            (playlist) => playlist.id === selectedPlaylistId
+          );
+    
+          if (defaultPlaylist) {
+            dispatch({
+              type: reducerCases.SET_PLAYLIST,
+              selectedPlaylist: defaultPlaylist,
+            });
+          }
         }
+      } catch (error) {
+        console.error("Error fetching playlists:", error);
       }
     };
+    
 
     getInitialPlaylist();
   }, [token, dispatch, selectedPlaylistId]);
