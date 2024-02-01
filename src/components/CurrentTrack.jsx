@@ -38,24 +38,18 @@ export default function CurrentTrack() {
           dispatch({ type: reducerCases.SET_PLAYING, currentPlaying });
         } else {
           // If no currently playing track, use the default track
-          dispatch({
-            type: reducerCases.SET_PLAYING,
-            currentPlaying: defaultTrack,
-          });
+          dispatch({ type: reducerCases.SET_PLAYING, currentPlaying: defaultTrack });
         }
       } catch (error) {
         console.error("Error fetching currently playing track:", error);
 
         // If an error occurs, use the default track
-        dispatch({
-          type: reducerCases.SET_PLAYING,
-          currentPlaying: defaultTrack,
-        });
+        dispatch({ type: reducerCases.SET_PLAYING, currentPlaying: defaultTrack });
       }
     };
 
     getCurrentTrack();
-  }, [token, dispatch, defaultTrack]);
+  }, [token, dispatch]);
 
   return (
     <Container>

@@ -1,13 +1,12 @@
 // playlists
 import axios from "axios";
-import React, { useEffect, useState } from "react";
+import React, { useEffect } from "react";
 import styled from "styled-components";
 import { reducerCases } from "../utils/Constants";
 import { useStateProvider } from "../utils/StateProvider";
 
 export default function Playlists() {
   const [{ token, playlists }, dispatch] = useStateProvider();
-  const [loginError, setLoginError] = useState(false);
 
   useEffect(() => {
     const getPlaylistData = async () => {
@@ -22,34 +21,12 @@ export default function Playlists() {
           }
         );
         const { items } = response.data;
-        const fetchedPlaylists = items.map(({ name, id }) => {
+        const playlists = items.map(({ name, id }) => {
           return { name, id };
         });
-        dispatch({ type: reducerCases.SET_PLAYLISTS, playlists: fetchedPlaylists });
-        setLoginError(false);
+        dispatch({ type: reducerCases.SET_PLAYLISTS, playlists });
       } catch (error) {
         console.error("Error fetching playlists:", error);
-
-        // Check if the error is due to user not being registered
-        if (
-          axios.isAxiosError(error) &&
-          error.response &&
-          error.response.status === 403
-        ) {
-          const errorMessage = error.response.data.error.message;
-          if (
-            errorMessage.includes(
-              "User not registered in the Developer Dashboard"
-            )
-          ) {
-            // Handle the case where the user is not registered
-            setLoginError(true);
-          } else {
-            console.error("Unexpected error during playlist fetch:", error);
-          }
-        } else {
-          console.error("Unexpected error during playlist fetch:", error);
-        }
       }
     };
 
@@ -63,25 +40,24 @@ export default function Playlists() {
   return (
     <Container>
       <ul>
-        {loginError && (
-          // Display default playlists if there's a login error
+        {playlists.length === 0 && (
+          // Display default playlists if no playlists are fetched
           <>
             <li onClick={() => changeCurrentPlaylist("golden")}>Golden</li>
             <li onClick={() => changeCurrentPlaylist("D_Day")}>D-Day</li>
             <li onClick={() => changeCurrentPlaylist("Face")}>Face</li>
+
           </>
         )}
-        {!loginError &&
-          playlists.map(({ name, id }) => (
-            <li key={id} onClick={() => changeCurrentPlaylist(id)}>
-              {name}
-            </li>
-          ))}
+        {playlists.map(({ name, id }) => (
+          <li key={id} onClick={() => changeCurrentPlaylist(id)}>
+            {name}
+          </li>
+        ))}
       </ul>
     </Container>
   );
 }
-
 
 const Container = styled.div`
   color: #b3b3b3;
