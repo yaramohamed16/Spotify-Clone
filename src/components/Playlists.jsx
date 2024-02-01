@@ -7,38 +7,53 @@ import { useStateProvider } from "../utils/StateProvider";
 
 export default function Playlists() {
   const [{ token, playlists }, dispatch] = useStateProvider();
+
   useEffect(() => {
     const getPlaylistData = async () => {
-      const response = await axios.get(
-        "https://api.spotify.com/v1/me/playlists",
-        {
-          headers: {
-            Authorization: "Bearer " + token,
-            "Content-Type": "application/json",
-          },
-        }
-      );
-      const { items } = response.data;
-      const playlists = items.map(({ name, id }) => {
-        return { name, id };
-      });
-      dispatch({ type: reducerCases.SET_PLAYLISTS, playlists });
+      try {
+        const response = await axios.get(
+          "https://api.spotify.com/v1/me/playlists",
+          {
+            headers: {
+              Authorization: "Bearer " + token,
+              "Content-Type": "application/json",
+            },
+          }
+        );
+        const { items } = response.data;
+        const playlists = items.map(({ name, id }) => {
+          return { name, id };
+        });
+        dispatch({ type: reducerCases.SET_PLAYLISTS, playlists });
+      } catch (error) {
+        console.error("Error fetching playlists:", error);
+      }
     };
+
     getPlaylistData();
   }, [token, dispatch]);
+
   const changeCurrentPlaylist = (selectedPlaylistId) => {
     dispatch({ type: reducerCases.SET_PLAYLIST_ID, selectedPlaylistId });
   };
+
   return (
     <Container>
       <ul>
-        {playlists.map(({ name, id }) => {
-          return (
-            <li key={id} onClick={() => changeCurrentPlaylist(id)}>
-              {name}
-            </li>
-          );
-        })}
+        {playlists.length === 0 && (
+          // Display default playlists if no playlists are fetched
+          <>
+            <li onClick={() => changeCurrentPlaylist("golden")}>Golden</li>
+            <li onClick={() => changeCurrentPlaylist("D_Day")}>D-Day</li>
+            <li onClick={() => changeCurrentPlaylist("Face")}>Face</li>
+
+          </>
+        )}
+        {playlists.map(({ name, id }) => (
+          <li key={id} onClick={() => changeCurrentPlaylist(id)}>
+            {name}
+          </li>
+        ))}
       </ul>
     </Container>
   );

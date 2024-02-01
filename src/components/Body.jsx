@@ -1,51 +1,71 @@
+// Body.js
 import axios from "axios";
 import React, { useEffect } from "react";
 import styled from "styled-components";
 import { useStateProvider } from "../utils/StateProvider";
 import { AiFillClockCircle } from "react-icons/ai";
 import { reducerCases } from "../utils/Constants";
+import defaultPlaylists from "./defaultPlaylists";
+
 export default function Body({ headerBackground }) {
   const [{ token, selectedPlaylist, selectedPlaylistId }, dispatch] =
     useStateProvider();
-  const extractDescription = (description) => {
-    // Use a regular expression to extract text between <a> and </a> tags
-    const regex = /<a[^>]*>(.*?)<\/a>/g;
-    const extractedText = description.replace(regex, (match, group1) => group1);
-
-    return extractedText;
-  };
 
   useEffect(() => {
     const getInitialPlaylist = async () => {
-      const response = await axios.get(
-        `https://api.spotify.com/v1/playlists/${selectedPlaylistId}`,
-        {
-          headers: {
-            Authorization: "Bearer " + token,
-            "Content-Type": "application/json",
-          },
+      try {
+        const response = await axios.get(
+          `https://api.spotify.com/v1/playlists/${selectedPlaylistId}`,
+          {
+            headers: {
+              Authorization: "Bearer " + token,
+              "Content-Type": "application/json",
+            },
+          }
+        );
+        const selectedPlaylist = {
+          id: response.data.id,
+          name: response.data.name,
+          description: extractDescription(response.data.description),
+          image: response.data.images[0].url,
+          tracks: response.data.tracks.items.map(({ track }) => ({
+            id: track.id,
+            name: track.name,
+            artists: track.artists.map((artist) => artist.name),
+            image: track.album.images[2].url,
+            duration: track.duration_ms,
+            album: track.album.name,
+            context_uri: track.album.uri,
+            track_number: track.track_number,
+          })),
+        };
+        dispatch({ type: reducerCases.SET_PLAYLIST, selectedPlaylist });
+      } catch (error) {
+        console.error("Error fetching playlist:", error);
+
+        // If there's an error fetching the selected playlist, use the default playlists
+        const defaultPlaylist = defaultPlaylists.find(
+          (playlist) => playlist.id === selectedPlaylistId
+        );
+
+        if (defaultPlaylist) {
+          dispatch({
+            type: reducerCases.SET_PLAYLIST,
+            selectedPlaylist: defaultPlaylist,
+          });
         }
-      );
-      const selectedPlaylist = {
-        id: response.data.id,
-        name: response.data.name,
-        description: extractDescription(response.data.description),
-        image: response.data.images[0].url,
-        tracks: response.data.tracks.items.map(({ track }) => ({
-          id: track.id,
-          name: track.name,
-          artists: track.artists.map((artist) => artist.name),
-          image: track.album.images[2].url,
-          duration: track.duration_ms,
-          album: track.album.name,
-          context_uri: track.album.uri,
-          track_number: track.track_number,
-        })),
-      };
-      dispatch({ type: reducerCases.SET_PLAYLIST, selectedPlaylist });
+      }
     };
+
     getInitialPlaylist();
   }, [token, dispatch, selectedPlaylistId]);
+
+  const extractDescription = (description) => {
+    const regex = /<a[^>]*>(.*?)<\/a>/g;
+    const extractedText = description.replace(regex, (match, group1) => group1);
+    return extractedText;
+  };
+
   const playTrack = async (
     id,
     name,
@@ -83,11 +103,13 @@ export default function Body({ headerBackground }) {
       dispatch({ type: reducerCases.SET_PLAYER_STATE, playerState: true });
     }
   };
+
   const msToMinutesAndSeconds = (ms) => {
     var minutes = Math.floor(ms / 60000);
     var seconds = ((ms % 60000) / 1000).toFixed(0);
     return minutes + ":" + (seconds < 10 ? "0" : "") + seconds;
   };
+
   return (
     <Container headerBackground={headerBackground}>
       {selectedPlaylist && (
