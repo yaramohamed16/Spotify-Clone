@@ -20,162 +20,148 @@ export default function PlayerControls() {
   const [repeatClickCount, setRepeatClickCount] = React.useState(0);
   const [shuffleState, setShuffleState] = useState(false);
 
-  // const changeState = async () => {
-  //   try {
-  //     const state = playerState ? "pause" : "play";
-  //     await axios.put(
-  //       `https://api.spotify.com/v1/me/player/${state}`,
-  //       {},
-  //       {
-  //         headers: {
-  //           "Content-Type": "application/json",
-  //           Authorization: "Bearer " + token,
-  //         },
-  //       }
-  //     );
-  //     dispatch({
-  //       type: reducerCases.SET_PLAYER_STATE,
-  //       playerState: !playerState,
-  //     });
-  //   } catch (error) {
-  //     console.error("Error response:", error.response);
-  //     throw error;
-  //   }
-  // };
+  const changeState = async () => {
+    try {
+      const state = playerState ? "pause" : "play";
+      await axios.put(
+        `https://api.spotify.com/v1/me/player/${state}`,
+        {},
+        {
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: "Bearer " + token,
+          },
+        }
+      );
+      dispatch({
+        type: reducerCases.SET_PLAYER_STATE,
+        playerState: !playerState,
+      });
+    } catch (error) {
+      console.error("Error response:", error.response);
+      throw error;
+    }
+  };
 
-  // const changeTrack = async (types) => {
-  //   try {
-  //     await axios.post(
-  //       `https://api.spotify.com/v1/me/player/${types}`,
-  //       {},
-  //       {
-  //         headers: {
-  //           "Content-Type": "application/json",
-  //           Authorization: "Bearer " + token,
-  //         },
-  //       }
-  //     );
+  const changeTrack = async (types) => {
+    try {
+      await axios.post(
+        `https://api.spotify.com/v1/me/player/${types}`,
+        {},
+        {
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: "Bearer " + token,
+          },
+        }
+      );
 
-  //     dispatch({ type: reducerCases.SET_PLAYER_STATE, playerState: true });
+      dispatch({ type: reducerCases.SET_PLAYER_STATE, playerState: true });
 
-  //     const response1 = await axios.get(
-  //       "https://api.spotify.com/v1/me/player/currently-playing",
-  //       {
-  //         headers: {
-  //           "Content-Type": "application/json",
-  //           Authorization: "Bearer " + token,
-  //         },
-  //       }
-  //     );
+      const response1 = await axios.get(
+        "https://api.spotify.com/v1/me/player/currently-playing",
+        {
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: "Bearer " + token,
+          },
+        }
+      );
 
-  //     if (response1.data !== "") {
-  //       const currentPlaying = {
-  //         id: response1.data.item.id,
-  //         name: response1.data.item.name,
-  //         artists: response1.data.item.artists.map((artist) => artist.name),
-  //         image: response1.data.item.album.images[2].url,
-  //       };
-  //       dispatch({ type: reducerCases.SET_PLAYING, currentPlaying });
-  //     } else {
-  //       dispatch({ type: reducerCases.SET_PLAYING, currentPlaying: null });
-  //     }
-  //   } catch (error) {
-  //     console.error("Error response:", error.response);
-  //     throw error;
-  //   }
-  // };
+      if (response1.data !== "") {
+        const currentPlaying = {
+          id: response1.data.item.id,
+          name: response1.data.item.name,
+          artists: response1.data.item.artists.map((artist) => artist.name),
+          image: response1.data.item.album.images[2].url,
+        };
+        dispatch({ type: reducerCases.SET_PLAYING, currentPlaying });
+      } else {
+        dispatch({ type: reducerCases.SET_PLAYING, currentPlaying: null });
+      }
+    } catch (error) {
+      console.error("Error response:", error.response);
+      throw error;
+    }
+  };
 
-  // const handleRepeatClick = async () => {
-  //   try {
-  //     let newRepeatMode;
-  //     let newRepeatClickCount = repeatClickCount;
+  const handleRepeatClick = async () => {
+    try {
+      let newRepeatMode;
+      let newRepeatClickCount = repeatClickCount;
 
-  //     if (repeatClickCount === 0) {
-  //       newRepeatMode = "context";
-  //       newRepeatClickCount = 1;
-  //     } else if (repeatClickCount === 1) {
-  //       newRepeatMode = "track";
-  //       newRepeatClickCount = 2;
-  //     } else {
-  //       newRepeatMode = "off";
-  //       newRepeatClickCount = 0;
-  //     }
+      if (repeatClickCount === 0) {
+        newRepeatMode = "context";
+        newRepeatClickCount = 1;
+      } else if (repeatClickCount === 1) {
+        newRepeatMode = "track";
+        newRepeatClickCount = 2;
+      } else {
+        newRepeatMode = "off";
+        newRepeatClickCount = 0;
+      }
 
-  //     await axios.put(
-  //       `https://api.spotify.com/v1/me/player/repeat?state=${newRepeatMode}`,
-  //       {},
-  //       {
-  //         headers: {
-  //           "Content-Type": "application/json",
-  //           Authorization: "Bearer " + token,
-  //         },
-  //       }
-  //     );
+      await axios.put(
+        `https://api.spotify.com/v1/me/player/repeat?state=${newRepeatMode}`,
+        {},
+        {
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: "Bearer " + token,
+          },
+        }
+      );
 
-  //     setRepeatMode(newRepeatMode);
-  //     setRepeatClickCount(newRepeatClickCount);
-  //   } catch (error) {
-  //     console.error("Error response:", error.response);
-  //     throw error;
-  //   }
-  // };
+      setRepeatMode(newRepeatMode);
+      setRepeatClickCount(newRepeatClickCount);
+    } catch (error) {
+      console.error("Error response:", error.response);
+      throw error;
+    }
+  };
 
-  // const toggleShuffle = async () => {
-  //   try {
-  //     const newShuffleState = !shuffleState;
+  const toggleShuffle = async () => {
+    try {
+      const newShuffleState = !shuffleState;
 
-  //     await axios.put(
-  //       `https://api.spotify.com/v1/me/player/shuffle?state=${newShuffleState}`,
-  //       {},
-  //       {
-  //         headers: {
-  //           "Content-Type": "application/json",
-  //           Authorization: "Bearer " + token,
-  //         },
-  //       }
-  //     );
+      await axios.put(
+        `https://api.spotify.com/v1/me/player/shuffle?state=${newShuffleState}`,
+        {},
+        {
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: "Bearer " + token,
+          },
+        }
+      );
 
-  //     setShuffleState(newShuffleState);
-  //   } catch (error) {
-  //     console.error("Error response:", error.response);
-  //     throw error;
-  //   }
-  // };
+      setShuffleState(newShuffleState);
+    } catch (error) {
+      console.error("Error response:", error.response);
+      throw error;
+    }
+  };
 
   return (
     <Container>
     
-      <div className="shuffle" 
-      // onClick={toggleShuffle}
-      >
+      <div className="shuffle" onClick={toggleShuffle}>
         <BsShuffle style={{ color: shuffleState ? "#1db954" : "#b3b3b3" }} />
       </div>
       <div className="previous">
-        <CgPlayTrackPrev
-        //  onClick={() => changeTrack("previous")} 
-
-         />
+        <CgPlayTrackPrev onClick={() => changeTrack("previous")} />
       </div>
       <div className="state">
         {playerState ? (
-          <BsFillPauseCircleFill 
-          
-          // onClick={changeState}
-           />
+          <BsFillPauseCircleFill onClick={changeState} />
         ) : (
-          <BsFillPlayCircleFill
-          //  onClick={changeState}
-            />
+          <BsFillPlayCircleFill onClick={changeState} />
         )}
       </div>
       <div className="next">
-        <CgPlayTrackNext
-        //  onClick={() => changeTrack("next")}
-          />
+        <CgPlayTrackNext onClick={() => changeTrack("next")} />
       </div>
-      <div className="repeat"
-      //  onClick={handleRepeatClick}
-       >
+      <div className="repeat" onClick={handleRepeatClick}>
         {repeatMode === "off" ? (
           <FiRepeat />
         ) : repeatMode === "track" ? (
