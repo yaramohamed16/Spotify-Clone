@@ -1,3 +1,4 @@
+//volume
 import axios from "axios";
 import React from "react";
 import styled from "styled-components";
@@ -32,8 +33,8 @@ const Container = styled.div`
   justify-content: flex-end;
   align-content: center;
   input {
-    width: 15rem;
+    width: 8rem;
     border-radius: 2rem;
-    height: 0.5rem;
+    height: 0.4rem;
   }
 `;

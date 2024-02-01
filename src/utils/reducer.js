@@ -1,3 +1,4 @@
+//reducer:
 import { reducerCases } from "./Constants";
 
 export const initialState = {
@@ -7,7 +8,7 @@ export const initialState = {
   currentPlaying: null,
   playerState: false,
   selectedPlaylist: null,
-  selectedPlaylistId: "37i9dQZF1DX08mhnhv6g9b",
+  selectedPlaylistId: "6kpDmPXv6mhRyT08ESwsR0",
 };
 
 const reducer = (state, action) => {
