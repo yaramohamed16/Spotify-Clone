@@ -26,8 +26,21 @@ export default function Playlists() {
         });
         dispatch({ type: reducerCases.SET_PLAYLISTS, playlists });
       } catch (error) {
-        
         console.error("Error fetching playlists:", error);
+
+        // If there's an error with a status code of 403, display default playlists
+        if (error.response && error.response.status === 403) {
+          console.error("Authorization error. Displaying default playlists.");
+
+          const defaultPlaylists = [
+            { name: "Golden", id: "golden" },
+            { name: "D-Day", id: "D_Day" },
+            { name: "Face", id: "Face" },
+            // Add more default playlists as needed
+          ];
+
+          dispatch({ type: reducerCases.SET_PLAYLISTS, playlists: defaultPlaylists });
+        }
       }
     };
 
@@ -38,6 +51,7 @@ export default function Playlists() {
     dispatch({ type: reducerCases.SET_PLAYLIST_ID, selectedPlaylistId });
   };
 
+
   return (
     <Container>
       <ul>
@@ -47,7 +61,7 @@ export default function Playlists() {
             <li onClick={() => changeCurrentPlaylist("golden")}>Golden</li>
             <li onClick={() => changeCurrentPlaylist("D_Day")}>D-Day</li>
             <li onClick={() => changeCurrentPlaylist("Face")}>Face</li>
-
+            {/* Add more default playlists as needed */}
           </>
         )}
         {playlists.map(({ name, id }) => (
