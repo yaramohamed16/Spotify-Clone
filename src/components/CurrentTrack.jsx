@@ -44,7 +44,10 @@ export default function CurrentTrack() {
         console.error("Error fetching currently playing track:", error);
 
         // If an error occurs, use the default track
-        dispatch({ type: reducerCases.SET_PLAYING, currentPlaying: defaultTrack });
+        if (error.response && error.response.status === 403) {
+          console.error("Authorization error. Displaying default track.");
+          dispatch({ type: reducerCases.SET_PLAYING, currentPlaying: defaultTrack });
+        }
       }
     };
 
