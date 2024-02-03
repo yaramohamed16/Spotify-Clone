@@ -13,7 +13,6 @@ import { LuRepeat1 } from "react-icons/lu";
 import { useStateProvider } from "../utils/StateProvider";
 import axios from "axios";
 import { reducerCases } from "../utils/Constants";
-
 export default function PlayerControls() {
   const [{ token, playerState }, dispatch] = useStateProvider();
   const [repeatMode, setRepeatMode] = React.useState("off");
@@ -38,8 +37,7 @@ export default function PlayerControls() {
         playerState: !playerState,
       });
     } catch (error) {
-      console.error("Error response:", error.response);
-      throw error;
+      handleApiError(error);
     }
   };
 
@@ -80,8 +78,7 @@ export default function PlayerControls() {
         dispatch({ type: reducerCases.SET_PLAYING, currentPlaying: null });
       }
     } catch (error) {
-      console.error("Error response:", error.response);
-      throw error;
+      handleApiError(error);
     }
   };
 
@@ -115,8 +112,7 @@ export default function PlayerControls() {
       setRepeatMode(newRepeatMode);
       setRepeatClickCount(newRepeatClickCount);
     } catch (error) {
-      console.error("Error response:", error.response);
-      throw error;
+      handleApiError(error);
     }
   };
 
@@ -137,14 +133,26 @@ export default function PlayerControls() {
 
       setShuffleState(newShuffleState);
     } catch (error) {
-      console.error("Error response:", error.response);
-      throw error;
+      handleApiError(error);
     }
+  };
+
+  const handleApiError = (error) => {
+    console.error("Error response:", error.response);
+
+    if (error.response && error.response.status === 403) {
+      // Handle 403 error (e.g., redirect to login page)
+      console.error("User is not authorized. Redirecting to login page.");
+      // You can redirect the user to a login page or perform any other action here
+    } else {
+      console.error("Generic API error:", error);
+    }
+
+    throw error;
   };
 
   return (
     <Container>
-    
       <div className="shuffle" onClick={toggleShuffle}>
         <BsShuffle style={{ color: shuffleState ? "#1db954" : "#b3b3b3" }} />
       </div>
