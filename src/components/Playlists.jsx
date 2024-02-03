@@ -26,6 +26,7 @@ export default function Playlists() {
         });
         dispatch({ type: reducerCases.SET_PLAYLISTS, playlists });
       } catch (error) {
+        
         console.error("Error fetching playlists:", error);
       }
     };

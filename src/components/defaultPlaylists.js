@@ -1,3 +1,4 @@
+//default
 import GOLDEN from "../images/GOLDEN.png";
 import D_Day from "../images/D-Day.png";
 import Face from "../images/Face.png";

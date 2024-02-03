@@ -43,16 +43,23 @@ export default function Body({ headerBackground }) {
       } catch (error) {
         console.error("Error fetching playlist:", error);
 
-        // If there's an error fetching the selected playlist, use the default playlists
-        const defaultPlaylist = defaultPlaylists.find(
-          (playlist) => playlist.id === selectedPlaylistId
-        );
+        // If there's an error fetching the selected playlist
+        if (error.response && error.response.status === 403) {
+          const defaultPlaylist = defaultPlaylists.find(
+            (playlist) => playlist.id === selectedPlaylistId
+          );
 
-        if (defaultPlaylist) {
-          dispatch({
-            type: reducerCases.SET_PLAYLIST,
-            selectedPlaylist: defaultPlaylist,
-          });
+          if (defaultPlaylist) {
+            dispatch({
+              type: reducerCases.SET_PLAYLIST,
+              selectedPlaylist: defaultPlaylist,
+            });
+          } else {
+            console.error("Default playlist not found for ID:", selectedPlaylistId);
+            // Handle this case appropriately, e.g., show an error message
+          }
+        } else {
+          // Handle other types of errors if needed
         }
       }
     };
