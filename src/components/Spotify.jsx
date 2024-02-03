@@ -11,13 +11,13 @@ import { reducerCases } from "../utils/Constants";
 
 export default function Spotify() {
   const [{ token }, dispatch] = useStateProvider();
-  const [navBackground, setNavBackground] = useState(false);
+  const [navBackground, setnavBackground] = useState(false);
   const [headerBackground, setHeaderBackground] = useState(false);
   const bodyRef = useRef();
   const bodyScrolled = () => {
     bodyRef.current.scrollTop >= 30
-      ? setNavBackground(true)
-      : setNavBackground(false);
+      ? setnavBackground(true)
+      : setnavBackground(false);
     bodyRef.current.scrollTop >= 268
       ? setHeaderBackground(true)
       : setHeaderBackground(false);

@@ -33,7 +33,7 @@ export default function Playlists() {
           console.error("Authorization error. Displaying default playlists.");
 
           const defaultPlaylists = [
-            { name: "Golden", id: "golden" },
+            { name: "Golden", id: "6kpDmPXv6mhRyT08ESwsR0" },
             { name: "D-Day", id: "D_Day" },
             { name: "Face", id: "Face" },
             // Add more default playlists as needed

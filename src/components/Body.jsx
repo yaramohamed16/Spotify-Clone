@@ -43,8 +43,11 @@ export default function Body({ headerBackground }) {
       } catch (error) {
         console.error("Error fetching playlist:", error);
 
-        // If there's an error fetching the selected playlist
         if (error.response && error.response.status === 403) {
+          console.error("Status Code:", error.response.status);
+          console.error("Response Data:", error.response.data);
+
+          // Display default playlist when the user is not registered
           const defaultPlaylist = defaultPlaylists.find(
             (playlist) => playlist.id === selectedPlaylistId
           );
@@ -55,7 +58,10 @@ export default function Body({ headerBackground }) {
               selectedPlaylist: defaultPlaylist,
             });
           } else {
-            console.error("Default playlist not found for ID:", selectedPlaylistId);
+            console.error(
+              "Default playlist not found for ID:",
+              selectedPlaylistId
+            );
             // Handle this case appropriately, e.g., show an error message
           }
         } else {

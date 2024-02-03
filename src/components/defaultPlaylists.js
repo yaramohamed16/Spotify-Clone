@@ -4,7 +4,7 @@ import D_Day from "../images/D-Day.png";
 import Face from "../images/Face.png";
 const defaultPlaylists = [
   {
-    id: "golden",
+    id: "6kpDmPXv6mhRyT08ESwsR0",
     name: "GOLDEN",
     description: "Jung Kook",
     image: GOLDEN,
