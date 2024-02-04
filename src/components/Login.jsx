@@ -7,13 +7,11 @@ export default function Login() {
     const confirmRedirect = window.confirm(`Log in with  
     email : acc.test.tester@gmail.com  
     password : te6Sti#Ng@2sP3t4!
-
-The Controlers and Clicked Songs won't work without premium for this account
     `);
 
     if (confirmRedirect) {
       const client_id = "e557a8cdb7fb43a49ac36146fb7cd5b9";
-      const redirect_uri = "http://localhost:3000/";
+      const redirect_uri = "https://spotify-clone16.netlify.app/";
       const api_uri = "https://accounts.spotify.com/authorize";
       const scope = [
         "user-read-private",
